@@ -19,7 +19,7 @@ def dialog():
 def sensor():
     data = request.json
     if "type" in data:  # type is humidity or temperature
-        sensor_data.update(data['type'], data['value'])
+        sensor_data.post(data['type'], data['value'])
     return data
 
 
