@@ -19,7 +19,12 @@ def dialog():
 def sensor():
     data = request.json
     if "type" in data:  # type is humidity or temperature
-        sensor_data.post(data['type'], data['value'])
+        if data['type'] in ['humidity', 'temperature']:
+            sensor_data.post(data['type'], data['value'])
+        elif data['type'] in ['']:  # TODO: add FCM for Toast message
+            print("alert")
+        else:
+            return "error"
     return data
 
 
