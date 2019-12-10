@@ -1,6 +1,8 @@
 import json
 from . import sensor_data
 
+#######################     TEST VARIABLES      ########################
+
 temperature = 0.0       # current temperature
 avgTemperature = 1.0    # the average temp of the day
 currentTime = 29494015
@@ -13,7 +15,10 @@ currentHour = 20    # test time. year month day hour minute
 currentMinute = 57
 timeDifference = 5      # 한 시간 단위
 
+#######################     TEST VARIABLES      ########################
+
 output = ""
+# return String value.
 
 def temperatureNLG( data ):
 
@@ -47,10 +52,10 @@ def temperatureNLG( data ):
         year = date.split('-', 3)[0]
         month = date.split('-', 3)[1]
         day = date.split('-', 3)[2]
-        # must compare this time from current time to know it is future or past.
+
         output = output + year + "년 " + month + "월 " + day + "일   "
 
-        dateDifference = date - currentDate        # NEED CORRECTION !!!
+        dateDifference = date - currentDate        # /***/ NEED CORRECTION !!!
         #   positive => future, zero => now, negative => past
 
         if dateDifference == 0:     # today
@@ -133,9 +138,9 @@ def temperatureNLG( data ):
                     output = output + "기온은 "  # default
 
     if avgTemperatureFlag == 1:
-        output = output + avgTemperature + "입니다."
+        output = output + str(avgTemperature) + "입니다."
     else:
-        output = output + temperature + "입니다."
+        output = output + str(temperature) + "입니다."
 
     return output
 
