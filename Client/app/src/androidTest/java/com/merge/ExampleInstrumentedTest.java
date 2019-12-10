@@ -1,4 +1,4 @@
-package com.mymerge;
+package com.merge;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.mymerge", appContext.getPackageName());
+        assertEquals("com.merge", appContext.getPackageName());
     }
 }

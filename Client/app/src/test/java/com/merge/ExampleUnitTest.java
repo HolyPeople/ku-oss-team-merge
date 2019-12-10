@@ -1,4 +1,4 @@
-package com.mymerge;
+package com.merge;
 
 import org.junit.Test;
 

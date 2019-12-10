@@ -1,5 +1,4 @@
-package com.mymerge;
-
+package com.merge;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -35,12 +34,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder notificationBuilder =
                     new NotificationCompat.Builder(this, channelID)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(messageTitle)
-                        .setContentText(messageBody)
-                        .setAutoCancel(true)
-                        .setSound(defaultSoundUri)
-                        .setContentIntent(pendingIntent);
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setContentTitle(messageTitle)
+                            .setContentText(messageBody)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent);
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 String channelName = "Channel Name";
