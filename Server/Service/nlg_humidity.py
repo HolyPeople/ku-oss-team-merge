@@ -148,7 +148,7 @@ def humidityNLG( data ):
         # if time == "현재" or "아까":
         #     if dateWordFlag == 0:
         #         output = output + time
-        #     else:                       # 어제 현재 기온??? 오늘 현재 기온??? no no
+        #     else:                       # 어제 현재 습도??? 오늘 현재 습도??? no no
         #         pass
         # elif time == "아침":
         #     if currentTimeFlag == 1:    # if the date is today
