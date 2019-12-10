@@ -28,5 +28,11 @@ def sensor():
     return data
 
 
+@app.route('/sensor/temp')
+def temp():
+    return sensor_data.get('temperature').order_by_key().start_at("1575955350").end_at("1575955365").get()
+
+
 if __name__ == '__main__':
     app.run()
+

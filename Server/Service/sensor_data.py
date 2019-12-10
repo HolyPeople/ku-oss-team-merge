@@ -9,9 +9,9 @@ firebase_admin.initialize_app(cred,
 
 
 def post(_type, value):
-    ref = db.reference('sensor/' + _type)
-    data = {'value': value, 'timestamp': int(time.time())}
-    ref.update(data)
+    ref = db.reference('sensor/' + _type + "/" + str(int(time.time())))
+    data = {'value': value}
+    ref.set(data)
 
 
 def get(_type):
