@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity{
     String myUrl = "http://192.168.219.132:5000/dialog"; //my URL
     String myApikey = "Hello,World"; //my API key
     String myMessage = ""; //my Message
+    String token = "";
     private TextToSpeech textToSpeech;
     private EditText edtSpeech;
 
@@ -85,6 +87,19 @@ public class MainActivity extends AppCompatActivity{
             }
         });
 
+        FirebaseMessaging.getInstance().subscribeToTopic("alert")
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "Subscribed to alert topic";
+                        if (!task.isSuccessful()) {
+                            msg = "Failed to subscribe to alert topic";
+                        }
+                        Log.d("FCM Log", msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -93,7 +108,7 @@ public class MainActivity extends AppCompatActivity{
                             Log.w("FCM Log", "getInstanceID failed", task.getException());
                             return;
                         }
-                        String token = task.getResult().getToken();
+                        token = task.getResult().getToken();
                         Log.d("FCM Log", "FCM 토큰: " + token);
                         Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
                     }
@@ -121,8 +136,6 @@ public class MainActivity extends AppCompatActivity{
                 mRecognizer = SpeechRecognizer.createSpeechRecognizer(MainActivity.this);
                 mRecognizer.setRecognitionListener(listener);
                 mRecognizer.startListening(intent);
-                //resultView.setText("서버에서 받은 데이터가 여기에 표시됩니다.");
-
             }
         });
 
@@ -202,7 +215,7 @@ public class MainActivity extends AppCompatActivity{
             }
 
             RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-            String url =myUrl+"?apiKey="+myApikey+"&message="+myMessage;
+            String url =myUrl+"?apiKey="+myApikey+"&message="+myMessage+"&token="+token;
 
             // Request a string response from the provided URL.
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
