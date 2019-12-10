@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 @app.route('/dialog')
 def dialog():
-    data = request.json
+    data = request.args
+    print(data)
     if "apiKey" in data:
         print(data["apiKey"])
         if data["apiKey"] == "Hello, World":  # TODO: replace api key to jwt(javascript wep token)
@@ -34,5 +35,5 @@ def temp():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="172.30.1.29")
 
