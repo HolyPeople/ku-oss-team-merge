@@ -1,9 +1,15 @@
 import json
+import time
+import datetime
 from . import sensor_data
+
+dic = sensor_data.get("temperature").order_by_key()
+target = 0.0
+current = {}
 
 #######################     TEST VARIABLES      ########################
 
-temperature = 0.0       # current temperature
+#temperature = 0.0       # current temperature
 avgTemperature = 1.0    # the average temp of the day
 currentTime = 29494015
 currentDate = 2019-10-21
@@ -20,13 +26,26 @@ timeDifference = 5      # 한 시간 단위
 output = ""
 # return String value.
 
-def temperatureNLG( data ):
+def getTemperatureValue( requestDate, requestTime ):  # the time request
+    year = requestDate.split('-', 3)[0]
+    month = requestDate.split('-', 3)[1]
+    day = requestDate.split('-', 3)[2]
+    hour = requestTime.split(':', 2)[0]
+    minute = requestTime.split(':', 2)[1]
 
-    #data = {}        # JSON Decode to Dictionary
+    dt = datetime.datetime(year, month, day, hour, minute)
+
+    global dic
+    global current
+    current = dic.end_at()
+    for i in dic:
+        if abs(int(i)-dt) < 100:
+            target = i["value"]
+    return target
 
 
-    timeWord = "현재"
-    dateWord = "오늘"
+def temperatureNLG( data ):     # data are the request intent and value(time)
+
     year = ""
     month = ""
     day = ""
@@ -44,8 +63,10 @@ def temperatureNLG( data ):
     futureTimeFlag = 0
 
     global output
+    # this is the global variable for return
     # entityTime = {}
     # entityDate = {}
+
 
     if data["intent"] == "Date":
         date = data["value"]
@@ -81,7 +102,7 @@ def temperatureNLG( data ):
         avgTemperatureFlag = 0
         time = data["value"]
         hour = time.split(':', 2)[0]
-        minute = time.split(':', 2)[0]
+        minute = time.split(':', 2)[1]
         output = output + hour + "시 " + minute + "분  "
 
         timeDifference = hour - currentHour    # NEED CORRECTION !!!    I only consider the hour-difference
@@ -124,6 +145,7 @@ def temperatureNLG( data ):
                 currentTimeFlag = 1
                 output = output + "현재 기온은 "
             else:
+                output = output + "오늘 "
                 if hour <= 9 and hour > 6:  # 6~9시 아침
                     output = output + "아침 기온은 "
                 elif hour >= 11 and hour <= 14:  # 11~14시 점심
@@ -137,10 +159,8 @@ def temperatureNLG( data ):
                 else:
                     output = output + "기온은 "  # default
 
-    if avgTemperatureFlag == 1:
-        output = output + str(avgTemperature) + "입니다."
-    else:
-        output = output + str(temperature) + "입니다."
+        temperature = getTemperatureValue(date, time)
+        output = output + temperature + "입니다."
 
     return output
 
