@@ -1,5 +1,8 @@
 from flask import Flask, request
 from Service import sensor_data
+from Service import nlg
+
+from . import sensor_data
 
 app = Flask(__name__)
 
@@ -29,4 +32,11 @@ def sensor():
 
 
 if __name__ == '__main__':
+    # testDict = {"intent": "Time", "value": "12:50"}
+    # nlg.temperatureNLG(testDict)
+    # ref = sensor_data.get("temperature")
+    # ref.order_by_key()
+    #print(ref.get())
+    # for i in dt:
+    #     print(i + " " + i["value"])
     app.run()

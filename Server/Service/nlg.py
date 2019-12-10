@@ -2,10 +2,11 @@ import json
 import time
 import datetime
 from . import sensor_data
+from firebase_admin import db
 
-dic = sensor_data.get("temperature").order_by_key()
+ref = sensor_data.get("temperature")
 target = 0.0
-current = {}
+#current = {}
 
 #######################     TEST VARIABLES      ########################
 
@@ -26,47 +27,57 @@ timeDifference = 5      # 한 시간 단위
 output = ""
 # return String value.
 
-def getTemperatureValue( requestDate, requestTime ):  # the time request
-    year = requestDate.split('-', 3)[0]
-    month = requestDate.split('-', 3)[1]
-    day = requestDate.split('-', 3)[2]
-    hour = requestTime.split(':', 2)[0]
-    minute = requestTime.split(':', 2)[1]
+def getTemperatureValue( ref, requestDate, requestTime ):  # the time request
+    tmp = time.localtime(time.time())
+
+    if len(requestDate) != 0:
+        year = int(requestDate.split('-', 3)[0])
+        month = int(requestDate.split('-', 3)[1])
+        day = int(requestDate.split('-', 3)[2])
+    else:
+        year = int(tmp.tm_year)
+        month = int(tmp.tm_mon)
+        day = int(tmp.tm_wday)
+
+    if len(requestTime) != 0:
+        hour = int(requestTime.split(':', 2)[0])
+        minute = int(requestTime.split(':', 2)[1])
+    else:
+        hour = int(tmp.tm_hour)
+        minute = int(tmp.tm_min)
 
     dt = datetime.datetime(year, month, day, hour, minute)
 
-    global dic
-    global current
-    current = dic.end_at()
-    for i in dic:
-        if abs(int(i)-dt) < 100:
-            target = i["value"]
+    #global current
+    #current = ref.end_at()
+    if db.reference("temperature/" + str(dt)) is not None:
+        target = db.reference("temperature/" + str(dt))
+    elif db.reference("temperature/" + str(dt+1)) is not None:
+        target = db.reference("temperature/" + str(dt+1))
+    else:
+        target = db.reference("temperature/" + str(dt + 2))
+
     return target
 
 
 def temperatureNLG( data ):     # data are the request intent and value(time)
-
+    currentTimeStr = time.localtime(time.time())
     year = ""
     month = ""
     day = ""
     hour = ""
     minute = ""
     # second = ""
-    dateWordFlag = 0
     avgTemperatureFlag = 1
 
-    currentDateFlag = 1
-    pastDateFlag = 0
-    futureDateFlag = 0
-    currentTimeFlag = 1
-    pastTimeFlag = 0
-    futureTimeFlag = 0
+    date = ""
+    timeVal = ""
 
     global output
     # this is the global variable for return
     # entityTime = {}
     # entityDate = {}
-
+    #print("temperatureNLG In")
 
     if data["intent"] == "Date":
         date = data["value"]
@@ -75,8 +86,9 @@ def temperatureNLG( data ):     # data are the request intent and value(time)
         day = date.split('-', 3)[2]
 
         output = output + year + "년 " + month + "월 " + day + "일   "
+        print(output)
 
-        dateDifference = date - currentDate        # /***/ NEED CORRECTION !!!
+        dateDifference = int(month)*30 + int(day) - (int(currentTimeStr.tm_mon)*30 + int(currentTimeStr.tm_mday))      # /***/ NEED CORRECTION !!!
         #   positive => future, zero => now, negative => past
 
         if dateDifference == 0:     # today
@@ -96,30 +108,29 @@ def temperatureNLG( data ):     # data are the request intent and value(time)
             output = output + date + "  "
         else:
             pass
-
+    #print("Date Done")
 
     if data["intent"] == "Time":
         avgTemperatureFlag = 0
-        time = data["value"]
-        hour = time.split(':', 2)[0]
-        minute = time.split(':', 2)[1]
+        timeVal = data["value"]
+        hour = timeVal.split(':', 2)[0]
+        minute = timeVal.split(':', 2)[1]
         output = output + hour + "시 " + minute + "분  "
-
-        timeDifference = hour - currentHour    # NEED CORRECTION !!!    I only consider the hour-difference
+        timeDifference = int(hour) - int(currentTimeStr.tm_hour)    # NEED CORRECTION !!!    I only consider the hour-difference
         #   positive => future time, zero => now, negative => past time
 
-        if dateDifference > 0:      # future
+        if timeDifference > 0:      # future
             currentTimeFlag = 0
             futureTimeFlag = 1
-            if hour <= 9 and hour > 6:  # 6~9시 아침
+            if int(hour) <= 9 and int(hour) > 6:  # 6~9시 아침
                 output = output + "아침 예상 기온은 "
-            elif hour >= 11 and hour <= 14:  # 11~14시 점심
+            elif int(hour) >= 11 and int(hour) <= 14:  # 11~14시 점심
                 output = output + "점심 예상 기온은 "
-            elif hour >= 17 and hour <= 20:  # 17~20시 저녁
+            elif int(hour) >= 17 and int(hour) <= 20:  # 17~20시 저녁
                 output = output + "저녁 예상 기온은 "
-            elif hour > 20 and hour < 24:  # 20~24시 밤
+            elif int(hour) > 20 and int(hour) < 24:  # 20~24시 밤
                 output = output + "밤 예상 기온은 "
-            elif hour >= 0 and hour <= 6:  # 0~6시 새벽
+            elif int(hour) >= 0 and int(hour) <= 6:  # 0~6시 새벽
                 output = output + "새벽 예상 기온은 "
             else:
                 output = output + "예상 기온은 "  # default
@@ -159,8 +170,14 @@ def temperatureNLG( data ):     # data are the request intent and value(time)
                 else:
                     output = output + "기온은 "  # default
 
-        temperature = getTemperatureValue(date, time)
-        output = output + temperature + "입니다."
+        temperature = getTemperatureValue(ref, date, timeVal)
+        print(output)
+        print(temperature.get())
+
+        if temperature.get() is not None:
+            output = output + temperature.get() + "입니다."
+        else:
+            print("데이터를 받아오는데 실패했습니다!")
 
     return output
 
