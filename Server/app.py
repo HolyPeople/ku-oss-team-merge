@@ -1,5 +1,5 @@
 from flask import Flask, request
-from Service import sensor_data
+from Service import sensor_data, nlg, nlp, toast
 
 app = Flask(__name__)
 
@@ -12,7 +12,8 @@ def dialog():
         print(data["apiKey"])
         if data["apiKey"] == "Hello, World":  # TODO: replace api key to jwt(javascript wep token)
             if "message" in data:
-                return data['message']
+                parse_data = nlp.parse(data['message'])
+                return nlg.recognize_intent(parse_data)
     return {"status": 404, "msg": "error"}
 
 
@@ -23,16 +24,11 @@ def sensor():
         if data['type'] == 'temp_humi':
             sensor_data.post('temperature', data['data']['temperature'])
             sensor_data.post('humidity', data['data']['humidity'])
-        elif data['type'] in ['']:  # TODO: add FCM for Toast message
-            print("alert")
+        elif data['type'] in ['window']:  # TODO: add FCM for Toast message
+            toast.send_to_topic(data['data'])
         else:
             return "error"
     return data
-
-
-@app.route('/sensor/temp')
-def temp():
-    return sensor_data.get('temperature').order_by_key().start_at("1575955350").end_at("1575955365").get()
 
 
 if __name__ == '__main__':
