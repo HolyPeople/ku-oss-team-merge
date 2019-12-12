@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "825751573361",
+    "firebase_url": "https://merge-3df83.firebaseio.com",
+    "project_id": "merge-3df83",
+    "storage_bucket": "merge-3df83.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825751573361:android:89dde44685bb06bd6b1cd0",
+        "android_client_info": {
+          "package_name": "com.merge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825751573361-m3l6r4bbi0jem3nbeqf4ob7qm3alh9c3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.merge",
+            "certificate_hash": "52f7d04eaaf42c5c541965d7c523c6e771f514d4"
+          }
+        },
+        {
+          "client_id": "825751573361-iq2aocs9th1pa0m636fmrspb0001da31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp51e-TdR8XhklJeKt0x3fsSXFgoIOl3U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825751573361-iq2aocs9th1pa0m636fmrspb0001da31.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
