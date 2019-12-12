@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity{
     TextView resultView;
     final int PERMISSION = 1;
     //TODO:: 자기의 도메인으로 수정!! res/xml/network_security_config.xml 파일의 도메인도 수정해야함
-    String myUrl = "http://192.168.219.132:5000/dialog"; //my URL
-    String myApikey = "Hello,World"; //my API key
+    String myUrl = "http://bquad.net:5000/dialog"; //my URL
+    String myApikey = "Hello, World"; //my API key
     String myMessage = ""; //my Message
     String token = "";
     private TextToSpeech textToSpeech;
